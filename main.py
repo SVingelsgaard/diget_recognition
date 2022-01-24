@@ -11,6 +11,9 @@ mnist = tf.keras.datasets.mnist
 xTrain = tf.keras.utils.normalize(xTrain, axis=1)
 xTest = tf.keras.utils.normalize(xTest, axis=1)
 
+xTrain = xTrain.astype('float32')
+xTest = xTest.astype('float32')
+
 
 model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(4)
@@ -23,7 +26,8 @@ model.add(tf.keras.layers.Dense(units=10, activation=tf.nn.softmax))
 
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
 
-model.fit(xTrain, yTrain, epochs=3)
+model.fit(tf.expand_dims(xTrain, axis=1), yTrain, epochs=3)
+#model.fit(xTrain, yTrain, epochs=3)
 
 loss, accuracy = model.evaluate(xTest, yTest)
 
