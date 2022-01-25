@@ -8,36 +8,37 @@ mnist = tf.keras.datasets.mnist
 
 (xTrain, yTrain), (xTest, yTest) = mnist.load_data()
 
-xTrain = tf.keras.utils.normalize(xTrain, axis=1)
-xTest = tf.keras.utils.normalize(xTest, axis=1)
 
 xTrain = xTrain.astype('float32')
 xTest = xTest.astype('float32')
 
 
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Dense(4)
+    tf.keras.layers.Flatten(input_shape = (28,28)),
+    tf.keras.layers.Dense(units=128, activation=tf.nn.relu),
+    tf.keras.layers.Dense(units=128, activation=tf.nn.relu),
+    tf.keras.layers.Dense(units=10, activation=tf.nn.softmax)
 ])  
 
-model.add(tf.keras.layers.Flatten(input_shape = (28,28)))
-model.add(tf.keras.layers.Dense(units=128, activation=tf.nn.relu))
-model.add(tf.keras.layers.Dense(units=128, activation=tf.nn.relu))
-model.add(tf.keras.layers.Dense(units=10, activation=tf.nn.softmax))
+model.compile(optimizer='adam', 
+              loss='sparse_categorical_crossentropy', 
+              metrics='accuracy')
 
-model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
-
-model.fit(tf.expand_dims(xTrain, axis=1), yTrain, epochs=3)
-#model.fit(xTrain, yTrain, epochs=3)
+#model.fit(tf.expand_dims(xTrain, axis=1), yTrain, epochs=3)
+model.fit(xTrain, yTrain, epochs=1)
 
 loss, accuracy = model.evaluate(xTest, yTest)
 
 model.save('digits.model')
 
-#for i in range(1,9):
-#print(i)
-img = cv.imread(f'own_numbers/1.png')
-img = np.invert(np.array(img))
+i = 1#for i in range(1,9):
+img = np.array(cv.imread(f'own_numbers/{i}.png'))
+
+#img = xTest[0]
+
+print(img.shape)
+
 prediction = model.predict(img)
 print(f'guess its {np.argmax(prediction)}')
-plt.imshow(img[0], cmap=plt.cm.binary)
+plt.imshow(img, cmap=plt.cm.binary)
 plt.show()
