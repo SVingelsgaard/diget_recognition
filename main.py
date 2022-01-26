@@ -23,17 +23,21 @@ model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy', 
               metrics='accuracy')
 
-model.fit(xTrain, yTrain, epochs=5)
+model.fit(xTrain, yTrain, epochs=10)
 
 loss, accuracy = model.evaluate(xTest, yTest)
 
 model.save('digits.model')
 
-for i in range(1,9):
+for i in range(10):
 
     img = np.invert(np.array([((cv.imread(f'own_numbers/{i}.png')))[:,:,0]]))#reading inverting and making it an array. more shit idk what do
     imgForGraphics = cv.imread(f'own_numbers/{i}.png')#only reading
     prediction = model.predict(img)
     print(f'guess its {np.argmax(prediction)}')
+
+    #plotin
     plt.imshow(imgForGraphics, cmap=plt.cm.binary)
+    plt.show()
+    plt.bar(np.arange(len(prediction.ravel())), prediction.ravel())
     plt.show()
